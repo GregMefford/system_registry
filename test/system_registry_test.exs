@@ -11,7 +11,7 @@ defmodule SystemRegistryTest do
 
   test "maps are transformed into composed transactions", %{root: root} do
     t =
-      SR.transaction()
+      SR.transaction(:system_registry)
       |> SR.update([root], %{b: 1, c: 2})
 
     parent = %Node{parent: [], node: [root], from: nil, key: root}
@@ -27,22 +27,22 @@ defmodule SystemRegistryTest do
 
   test "local transaction commit", %{root: root} do
     update = %{root => %{a: 1}}
-    SR.update([], update)
+    SR.update(:system_registry, [], update)
     assert ^update = SR.match(self(), update)
 
-    SR.delete([root, :a])
+    SR.delete(:system_registry, [root, :a])
     assert %{} == SR.match(self(), :_)
   end
 
   test "match specs", %{root: root} do
     update = %{root => %{a: 1}}
-    SR.update([], update)
+    SR.update(:system_registry, [], update)
     assert ^update = SR.match(self(), update)
     assert %{} == SR.match(self(), %{blah: %{}})
   end
 
   test "can delete all nodes for a process", %{root: root} do
-    SR.transaction
+    SR.transaction(:system_registry)
     |> SR.update([root, :a, :b], 1)
     |> SR.update([root, :a, :c], 1)
     |> SR.commit

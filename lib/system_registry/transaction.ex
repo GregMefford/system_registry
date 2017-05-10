@@ -1,6 +1,6 @@
 defmodule SystemRegistry.Transaction do
   @moduledoc false
-  defstruct [pid: nil, nodes: [], updates: [], deletes: []]
+  defstruct [tag: nil, pid: nil, nodes: [], updates: [], deletes: []]
 
   alias __MODULE__
   alias SystemRegistry.Node
@@ -16,8 +16,8 @@ defmodule SystemRegistry.Transaction do
     deletes:  MapSet.t
   }
 
-  def begin do
-    %__MODULE__{updates: %{}, deletes: MapSet.new, pid: self(), nodes: MapSet.new}
+  def begin(tag) do
+    %__MODULE__{tag: tag, updates: %{}, deletes: MapSet.new, pid: self(), nodes: MapSet.new}
   end
 
   # Add an update to a transaction
